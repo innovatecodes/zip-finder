@@ -1,0 +1,10 @@
+{
+    "/": {
+        "target": "https://httpbin.org",
+        "secure": false,
+        "changeOrigin": true,
+        "pathRewrite": {
+            "^/": ""
+        }
+    }
+}

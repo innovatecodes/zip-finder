@@ -1,0 +1,192 @@
+<div class="container">
+  <div class="row">
+    <h2 class="text-secondary text-center text-capitalize mt-2">
+      Buscar endereço pelo cep
+    </h2>
+    <form
+      #form="ngForm"
+      (ngSubmit)="onSubmit(form)"
+      class="col-12 col-lg-8 gap-2 m-auto mb-2"
+      [ngClass]="{
+        'py-0': (loading$ | async),
+        'py-2': !(loading$ | async)
+      }"
+      *ngIf="viaCep$ | async as viaCepResponse"
+    >
+      <!-- #region ng-container -->
+      <!-- <ng-container
+        *ngIf="
+          !((loading$ | async) && !isSubmitted) as loading;
+          context: { $implicit: loading };
+          then: formFieldsTemplate;
+          else: spinnerTemplate
+        "
+      ></ng-container> -->
+
+      <ng-container
+        *ngIf="
+          !((loading$ | async) && !isSubmitted) as loading;
+          else spinnerTemplate
+        "
+      >
+        <ng-container
+          *ngTemplateOutlet="
+            formFieldsTemplate;
+            context: { $implicit: loading }
+          "
+        ></ng-container>
+      </ng-container>
+      <!-- #endregion -->
+
+      <ng-template #formFieldsTemplate let-loading>
+        <div class="col-12 mb-2">
+          <label for="inputZipCode" class="form-label">Cep</label>
+          <input
+            type="text"
+            class="form-control"
+            id="inputZipCode"
+            name="zipCode"
+            #zipCodeRef
+            ngModel
+            (ngModelChange)="onChange($event)"
+            (focus)="onFocus()"
+            (blur)="onBlur()"
+            [attributeMaximumLength]="maximumAttributeValue"
+            required
+          />
+        </div>
+
+        <ng-container ngModelGroup="address" #addressGroup="ngModelGroup">
+          <div class="row">
+            <div class="col-12 col-md-6 mb-2">
+              <label for="inputStreet" class="form-label">Rua</label>
+              <input
+                type="text"
+                class="form-control"
+                id="inputStreet"
+                name="street"
+                ngModel
+                readonly
+                customClass
+              />
+            </div>
+
+            <div class="col-12 col-md-6 mb-2">
+              <label for="inputComplement" class="form-label"
+                >Complemento</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="inputComplement"
+                name="complement"
+                ngModel
+                readonly
+                customClass
+              />
+            </div>
+
+            <div class="col-12 col-md-12 mb-2">
+              <label for="inputNeighborhood" class="form-label">Bairro</label>
+              <input
+                type="text"
+                class="form-control"
+                id="inputNeighborhood"
+                name="neighborhood"
+                ngModel
+                readonly
+                customClass
+              />
+            </div>
+
+            <div class="col-12 col-md-6 mb-2">
+              <label for="inputCity" class="form-label">Cidade</label>
+              <input
+                type="text"
+                class="form-control"
+                id="inputCity"
+                name="city"
+                ngModel
+                readonly
+                customClass
+              />
+            </div>
+
+            <div class="col-12 col-md-6 mb-2">
+              <label for="inputState" class="form-label">Estado</label>
+              <input
+                type="text"
+                class="form-control"
+                id="inputState"
+                name="state"
+                ngModel
+                readonly
+                customClass
+              />
+            </div>
+          </div>
+
+          <div class="col-12">
+            <button
+              type="submit"
+              class="btn text-capitalize fw-semibold btn-lg d-flex gap-2"
+              [ngClass]="{
+                'btn-secondary text-light border-0': !isFormValid,
+                'btn-outline-ligh border border-2': isFormValid
+              }"
+              [disabled]="!isFormValid"
+            >
+              <ng-container
+                *ngTemplateOutlet="
+                  loading && isSubmitted ? spinnerTemplate : undefined
+                "
+              ></ng-container>
+              Submeter
+            </button>
+          </div>
+
+          <app-debug-form *ngIf="isFormValid">
+            <div class="px-2 mb-2">
+              <h5 class="bg-info text-capitalize p-2 text-light">
+                Debug output / Info
+              </h5>
+              <div
+                class="d-flex flex-column gap-2 flex-md-row justify-content-md-between"
+              >
+                <span><b>Dirty:</b> {{ form.dirty }}</span>
+                <span><b>Touched:</b> {{ form.touched }}</span>
+                <span><b>Valid:</b> {{ form.valid }}</span>
+              </div>
+            </div>
+
+            <pre class="m-0 px-2">{{ storedData | json }}</pre>
+          </app-debug-form>
+        </ng-container>
+      </ng-template>
+    </form>
+  </div>
+</div>
+
+<ng-template #spinnerTemplate>
+  <app-spinner [isSubmitted]="isSubmitted"></app-spinner>
+</ng-template>
+
+<div
+  #errorToastRef
+  class="toast align-items-center position-fixed bottom-0 mb-2 end-0 me-2 text-bg-{{
+    colorSuffix
+  }}"
+  role="alert"
+  aria-live="assertive"
+  aria-atomic="true"
+>
+  <div class="d-flex">
+    <span class="toast-body text-white">{{ message }}</span>
+    <button
+      type="button"
+      class="btn-close btn-close-white me-2 m-auto"
+      data-bs-dismiss="toast"
+      aria-label="Close"
+    ></button>
+  </div>
+</div>
