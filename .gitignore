@@ -45,6 +45,7 @@ Thumbs.db
 db.json
 
 # Ignorar ambientes locais
+/environments/environment.d.ts
 /environments/environment.ts
 /environments/environment.development.ts
 /environments/environment.local.ts
